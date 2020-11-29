@@ -1,7 +1,7 @@
 main :: () {
-    window_width  :: 800;
-    window_height :: 450;
-    title :: "d3d11 backend";
+    window_width  :: 1280;
+    window_height :: 720;
+    title :: "d3d11 example";
 
     the_window := create_window(window_width, window_height, title);
 
@@ -10,9 +10,7 @@ main :: () {
     base_device: *ID3D11Device;
     base_device_context: *ID3D11DeviceContext;
 
-    create_device_flags :=
-        D3D11_CREATE_DEVICE_FLAGS.D3D11_CREATE_DEVICE_DEBUG |
-        .D3D11_CREATE_DEVICE_BGRA_SUPPORT;
+    create_device_flags := D3D11_CREATE_DEVICE_FLAGS.D3D11_CREATE_DEVICE_DEBUG | .D3D11_CREATE_DEVICE_BGRA_SUPPORT;
 
     {
         res := D3D11CreateDevice(null, .D3D_DRIVER_TYPE_HARDWARE, null, create_device_flags, feature_levels.data,
@@ -22,20 +20,20 @@ main :: () {
 
     device: *ID3D11Device1;
     {
-        res := base_device.QueryInterface(cast(*IUnknown)base_device, *uid(ID3D11Device1.uuid), cast(**void)*device);
+        res := base_device.QueryInterface(xx base_device, *uid(ID3D11Device1.uuid), cast(**void)*device);
         assert(res == S_OK);
     }
 
     device_context1: *ID3D11DeviceContext1;
     {
-        res := base_device_context.QueryInterface(cast(*IUnknown)base_device_context, *uid(ID3D11DeviceContext1.uuid), cast(**void)*device_context1);
+        res := base_device_context.QueryInterface(xx base_device_context, *uid(ID3D11DeviceContext1.uuid), cast(**void)*device_context1);
         assert(res == S_OK);
     }
     device_context := cast(*ID3D11DeviceContext)device_context1;
 
     dxgi_device: *IDXGIDevice1;
     {
-        res := device.QueryInterface(cast(*IUnknown)device, *uid(IDXGIDevice1.uuid), cast(**void)*dxgi_device);
+        res := device.QueryInterface(xx device, *uid(IDXGIDevice1.uuid), cast(**void)*dxgi_device);
         assert(res == S_OK);
     }
 
@@ -395,11 +393,6 @@ next_multiple_of :: (N: int, X: int) -> int {
     return ((N - 1) | (X - 1)) + 1;
 }
 
-
-#load "d3d11_1.jai";
-#load "data.jai";
-
-
 #import "d3d11";
 #import "Windows_Utf8";
 #import "dxgi";
@@ -409,3 +402,7 @@ next_multiple_of :: (N: int, X: int) -> int {
 #import "Basic";
 #import "Windows";
 #import "Math";
+
+#load "d3d11_1.jai"; // for 11_1 features
+#load "data.jai";    // model data
+
