@@ -295,12 +295,6 @@ main :: () {
             }
         }
 
-        rotateX: Matrix4;
-        rotateY: Matrix4;
-        rotateZ: Matrix4;
-        scale: Matrix4;
-        translate: Matrix4;
-
         now := get_time();
         if last_time dt = cast(float) (now - last_time);
         last_time = now;
@@ -308,20 +302,22 @@ main :: () {
         elapsed_time += dt;
 
         // UPDATE
-        rotateX   = make_matrix4(1, 0, 0, 0, 0, cos(modelRotation.x), -sin(modelRotation.x), 0, 0, sin(modelRotation.x), cos(modelRotation.x), 0, 0, 0, 0, 1 );
-        rotateY   = make_matrix4(cos(modelRotation.y), 0, sin(modelRotation.y), 0, 0, 1, 0, 0, -sin(modelRotation.y), 0, cos(modelRotation.y), 0, 0, 0, 0, 1 );
-        rotateZ   = make_matrix4(cos(modelRotation.z), -sin(modelRotation.z), 0, 0, sin(modelRotation.z), cos(modelRotation.z), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 );
-        scale     = make_matrix4(modelScale.x, 0, 0, 0, 0, modelScale.y, 0, 0, 0, 0, modelScale.z, 0, 0, 0, 0, 1 );
-        translate = make_matrix4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, modelTranslation.x, modelTranslation.y, modelTranslation.z, 1 );
+        rotateX   := make_matrix4(1, 0, 0, 0, 0, cos(modelRotation.x), -sin(modelRotation.x), 0, 0, sin(modelRotation.x), cos(modelRotation.x), 0, 0, 0, 0, 1 );
+        rotateY   := make_matrix4(cos(modelRotation.y), 0, sin(modelRotation.y), 0, 0, 1, 0, 0, -sin(modelRotation.y), 0, cos(modelRotation.y), 0, 0, 0, 0, 1 );
+        rotateZ   := make_matrix4(cos(modelRotation.z), -sin(modelRotation.z), 0, 0, sin(modelRotation.z), cos(modelRotation.z), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 );
+        scale     := make_matrix4(modelScale.x, 0, 0, 0, 0, modelScale.y, 0, 0, 0, 0, modelScale.z, 0, 0, 0, 0, 1 );
+        translate := make_matrix4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, modelTranslation.x, modelTranslation.y, modelTranslation.z, 1 );
 
-        modelRotation.x += 0.005;
-        modelRotation.y += 0.009;
-        modelRotation.z += 0.001;
+        modelRotation.x += 0.5 * dt;
+        modelRotation.y += 0.9 * dt;
+        modelRotation.z += 0.1 * dt;
         // END UPDATE
 
         reset_temporary_storage();
 
         // DRAW
+
+        // update constants buffer
 
         mappedSubresource: D3D11_MAPPED_SUBRESOURCE;
         {
@@ -335,7 +331,7 @@ main :: () {
             device_context.Unmap(xx device_context, xx constant_buffer, 0);
         }
 
-        ///////////////////////////////////////////////////////////////////////////////////////////
+        // viewport
 
         backgroundColor: [4]float = .[ 0.025, 0.025, 0.025, 1.0];
 
@@ -350,7 +346,7 @@ main :: () {
         viewport.MinDepth = 0;
         viewport.MaxDepth = 1;
 
-        ///////////////////////////////////////////////////////////////////////////////////////////
+        // setup draw state
 
         device_context.ClearRenderTargetView(device_context, frame_buffer_view, backgroundColor);
         device_context.ClearDepthStencilView(device_context, depth_buffer_view, cast(u32)D3D11_CLEAR_DEPTH, 1.0, 0);
@@ -374,11 +370,11 @@ main :: () {
         device_context.OMSetDepthStencilState(device_context, depth_stencil_state, 0);
         device_context.OMSetBlendState(device_context, null, cast([4]float)null, 0xffffffff); // use default blend mode (i.e. disable)
 
-        ///////////////////////////////////////////////////////////////////////////////////////////
+        // the draw call
 
         device_context.DrawIndexed(device_context, IndexData.count, 0, 0);
 
-        ///////////////////////////////////////////////////////////////////////////////////////////
+        // present to the screen
 
         swap_chain.Present(cast(*IDXGISwapChain)swap_chain, 1, 0);
 
