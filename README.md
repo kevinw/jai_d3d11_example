@@ -1,4 +1,4 @@
-# Direct3D minimal Jai example
+# Direct3D 11 minimal Jai example
 
 To compile and run:
 
