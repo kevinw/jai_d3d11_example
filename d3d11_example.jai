@@ -246,10 +246,10 @@ main :: () {
         Height             = TEXTURE_HEIGHT, // in data.h
         MipLevels          = 1,
         ArraySize          = 1,
-        Format             = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
+        Format             = .DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
         SampleDesc.Count   = 1,
-        Usage              = D3D11_USAGE_IMMUTABLE,
-        BindFlags          = D3D11_BIND_SHADER_RESOURCE,
+        Usage              = .D3D11_USAGE_IMMUTABLE,
+        BindFlags          = .D3D11_BIND_SHADER_RESOURCE,
     };
 
     textureData: D3D11_SUBRESOURCE_DATA;
@@ -401,4 +401,3 @@ next_multiple_of :: (N: int, X: int) -> int {
 
 #load "d3d11_1.jai"; // for 11_1 features
 #load "data.jai";    // model data
-
